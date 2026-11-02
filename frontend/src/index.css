@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-canvas font-sans text-[15px] text-ink antialiased; }
+  input:not([type="radio"]):not([type="checkbox"]), textarea, select {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-accent;
+  }
+  input[type="radio"], input[type="checkbox"] { @apply h-4 w-4 accent-accent; }
+}
