@@ -1,10 +1,13 @@
 """Thin wrapper around the Gemini API. The API key stays on the server."""
 import json
+import logging
 import re
 import time
 from typing import Any
 
 from app.core.config import get_settings
+
+log = logging.getLogger("uvicorn.error")
 
 
 class LLMError(Exception):
@@ -30,6 +33,7 @@ def generate(prompt: str, system: str | None = None) -> str:
     except LLMError:
         raise
     except Exception as e:  # network, quota, bad key...
+        log.error("Gemini generate failed (%s): %s", type(e).__name__, e)
         raise LLMError(f"AI request failed: {type(e).__name__}") from e
     if not res.text:
         raise LLMError("The AI returned an empty response.")
@@ -47,6 +51,7 @@ def generate_json(prompt: str) -> Any:
     except LLMError:
         raise
     except Exception as e:
+        log.error("Gemini generate_json failed (%s): %s", type(e).__name__, e)
         raise LLMError(f"AI request failed: {type(e).__name__}") from e
     text = re.sub(r"^```(?:json)?|```$", "", (res.text or "").strip()).strip()
     try:
@@ -69,6 +74,7 @@ def embed(texts: list[str]) -> list[list[float]]:
                 break
             except Exception as e:
                 if attempt == 2:
+                    log.error("Gemini embed failed (%s): %s", type(e).__name__, e)
                     raise LLMError(f"Embedding request failed: {type(e).__name__}") from e
                 time.sleep(4 * (attempt + 1))
     return out
