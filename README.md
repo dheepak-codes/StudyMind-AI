@@ -35,8 +35,8 @@ cd frontend
 npm install
 npm run dev
 ```
-Open http://localhost:5173, create an account, and try each page.
-API docs: http://localhost:8000/docs
+https://studymindainet.netlify.app/
+
 
 ## Tests
 ```bash
